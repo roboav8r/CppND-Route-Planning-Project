@@ -29,9 +29,15 @@ git clone git@github.com:udacity/CppND-Route-Planning-Project.git --recurse-subm
 * IO2D
   * Installation instructions for all operating systems can be found [here](https://github.com/cpp-io2d/P0267_RefImpl/blob/master/BUILDING.md)
   * This library must be built in a place where CMake `find_package` will be able to find it
+
+  * [JD] NOTE: Had to install SVGPP version 1.3.0 manually into the /usr/include directory from here (https://github.com/svgpp/svgpp/archive/master.zip)
+  * [JD] NOTE: Commented out lines 38-40 (NOT DEFINED IO2D_WITHOUT_SAMPLES) in CMakeLists.txt
+  * [JD] NOTE: Also added a `sudo make install` after the `cmake --build .` command for IO2D.
  
 
 ## Compiling and Running
+### Cloning
+Since this is a submodule of `udacity_cpp_developer`, the proper cloning command is `git clone --recursive ../udacity_cpp_developer.git`, but if this was not done you can run `git submodule update --init --recursive` in this directory to download `pugixml` and `googletest`.
 
 ### Compiling
 To compile the project, first, create a `build` directory and change to that directory:
