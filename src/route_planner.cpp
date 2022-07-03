@@ -94,7 +94,7 @@ void RoutePlanner::AStarSearch() {
 
     // Add starting node to vector of open nodes; mark as visited
     open_list.push_back(start_node);
-    start_node->visited=true;
+    start_node->visited=true; // Added to fix infinite loop per https://knowledge.udacity.com/questions/517436
 
     // Main loop
     while (open_list.empty() == false) {
@@ -103,7 +103,7 @@ void RoutePlanner::AStarSearch() {
         current_node = NextNode();
 
         // If the goal has been reached, save the final path and exit AStarSearch()
-        if (current_node==end_node) {
+        if (current_node==end_node) { // Replaced ReachedGoal check with this per https://knowledge.udacity.com/questions/517436
             m_Model.path = ConstructFinalPath(current_node);
             return;
 
