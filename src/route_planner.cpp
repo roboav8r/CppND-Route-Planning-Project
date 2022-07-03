@@ -44,7 +44,7 @@ Sort the open list of nodes and return the next node.
 
 // Comparator function for open_list sorting
 bool RoutePlanner::GreaterSumGH (const RouteModel::Node* node1, const RouteModel::Node* node2) {
-    return ((node1->g_value + node1->h_value) >= (node1->g_value + node1->h_value));
+    return ((node1->g_value + node1->h_value) > (node2->g_value + node2->h_value));
 }
 
 RouteModel::Node *RoutePlanner::NextNode() {
@@ -58,14 +58,7 @@ RouteModel::Node *RoutePlanner::NextNode() {
 }
 
 
-// TODO 6: Complete the ConstructFinalPath method to return the final path found from your A* search.
-// Tips:
-// - This method should take the current (final) node as an argument and iteratively follow the 
-//   chain of parents of nodes until the starting node is found.
-// - For each node in the chain, add the distance from the node to its parent to the distance variable.
-// - The returned vector should be in the correct order: the start node should be the first element
-//   of the vector, the end node should be the last element.
-
+// Return the final path found from A* search
 std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node *current_node) {
     // Create path_found vector
     distance = 0.0f;
@@ -99,9 +92,33 @@ std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node 
 // - When the search has reached the end_node, use the ConstructFinalPath method to return the final path that was found.
 // - Store the final path in the m_Model.path attribute before the method exits. This path will then be displayed on the map tile.
 
+bool RoutePlanner::ReachedGoal (RouteModel::Node* init_node, RouteModel::Node* goal_node) {
+    return ((init_node->x == goal_node->x) && (init_node->y == goal_node->y));
+}
+
 void RoutePlanner::AStarSearch() {
+    // Initialize current node & loop control flag
     RouteModel::Node *current_node = nullptr;
 
-    // TODO: Implement your solution here.
+    // Add starting node to vector of open nodes; mark as visited
+    open_list.push_back(start_node);
+    start_node->visited=true;
+
+    // Main loop
+    while (open_list.empty() == false) {
+
+        // Select next node from open_list
+        current_node = NextNode();
+
+        // If current goal 
+        if (ReachedGoal(current_node,end_node)){
+            std::cout << "reached the goal!" <<"\n";
+            m_Model.path = ConstructFinalPath(current_node);
+            return;
+        } else {
+            AddNeighbors(current_node);
+        }
+
+    }
 
 }

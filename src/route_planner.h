@@ -26,6 +26,7 @@ class RoutePlanner {
     RouteModel::Node *start_node;
     RouteModel::Node *end_node;
     static bool GreaterSumGH(const RouteModel::Node* node1, const RouteModel::Node* node2);
+    static bool ReachedGoal(RouteModel::Node* init_node, RouteModel::Node* goal_node);
 
     float distance = 0.0f;
     RouteModel &m_Model;
