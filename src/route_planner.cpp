@@ -39,16 +39,12 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) {
 }
 
 /* 
-Sort the open list and return the next node.
+Sort the open list of nodes and return the next node.
 */
 
 // Comparator function for open_list sorting
 bool RoutePlanner::GreaterSumGH (const RouteModel::Node* node1, const RouteModel::Node* node2) {
-    if ((node1->g_value + node1->h_value) >= (node1->g_value + node1->h_value)) {
-        return 1;
-    } else {
-        return 0;
-    }
+    return ((node1->g_value + node1->h_value) >= (node1->g_value + node1->h_value));
 }
 
 RouteModel::Node *RoutePlanner::NextNode() {
@@ -75,7 +71,20 @@ std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node 
     distance = 0.0f;
     std::vector<RouteModel::Node> path_found;
 
-    // TODO: Implement your solution here.
+    // Add current (final) node to the path vector 
+    path_found.push_back(*current_node);
+
+    // Iterate through the parents of the current node until the nullptr is reached (default initial parent value)
+    RouteModel::Node *path_node = current_node;
+    while (path_node->parent != nullptr) {
+
+        // Insert path_node in path_found vector and update total distance
+        path_found.insert(path_found.begin(), *path_node->parent);
+        distance += path_node->distance(*(path_node->parent));
+
+        // Increment from current path node to its parent
+        path_node = path_node->parent;
+    }
 
     distance *= m_Model.MetricScale(); // Multiply the distance by the scale of the map to get meters.
     return path_found;
