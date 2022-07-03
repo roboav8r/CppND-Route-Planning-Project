@@ -59,6 +59,14 @@ Or to specify a map file:
 ./OSM_A_star_search -f ../<your_osm_file.osm>
 ```
 
+### Getting custom map data
+You can download a custom `.osm` file for a designated region. First, find the bounding box coordinates of the region (Google maps works fine for this).
+Then, submit a request to the OSM API as follows:
+
+wget -O <filename> "https://api.openstreetmap.org/api/0.6/map?bbox=<min_long>,<min_lat>,<max_long>,<max_lat>"
+
+wget -O ut_chilis.osm "https://api.openstreetmap.org/api/0.6/map?bbox=-97.739,30.283,-97.731,30.314"
+
 ## Testing
 
 The testing executable is also placed in the `build` directory. From within `build`, you can run the unit tests as follows:
