@@ -25,7 +25,6 @@ class RoutePlanner {
     std::vector<RouteModel::Node*> open_list;
     RouteModel::Node *start_node;
     RouteModel::Node *end_node;
-    static bool GreaterSumGH(const RouteModel::Node* node1, const RouteModel::Node* node2);
 
     float distance = 0.0f;
     RouteModel &m_Model;

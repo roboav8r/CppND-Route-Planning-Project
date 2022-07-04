@@ -8,8 +8,6 @@ RoutePlanner::RoutePlanner(RouteModel &model, float start_x, float start_y, floa
     end_x *= 0.01;
     end_y *= 0.01;
 
-    // Find the closest nodes to the starting and ending coordinates.
-    // Store the nodes in the RoutePlanner's start_node and end_node attributes.
     start_node = &model.FindClosestNode(start_x, start_y);
     end_node = &model.FindClosestNode(end_x, end_y);
 }
@@ -27,7 +25,7 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) {
     current_node->FindNeighbors();
 
     // Compute attributes of each neighbor and add to open_list
-    for (RouteModel::Node *neighbor : current_node->neighbors) {
+    for (auto& neighbor : current_node->neighbors) {
         neighbor->parent = current_node;
         neighbor->h_value = RoutePlanner::CalculateHValue(neighbor);
         neighbor->g_value = current_node->g_value + current_node->distance(*neighbor);
@@ -38,22 +36,14 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) {
 
 }
 
-/* 
-Sort the open list of nodes and return the next node.
-*/
-
-// Comparator function for open_list sorting
-bool RoutePlanner::GreaterSumGH (const RouteModel::Node* node1, const RouteModel::Node* node2) {
-    return ((node1->g_value + node1->h_value) > (node2->g_value + node2->h_value));
-}
-
+// Sort the open list of nodes and return the next node.
 RouteModel::Node *RoutePlanner::NextNode() {
     // Sort the open_list with highest g+h at front, lowest g+h at back
-    std::sort(open_list.begin(), open_list.end(), GreaterSumGH);
+    std::sort(open_list.begin(), open_list.end(), [](const RouteModel::Node* n1, const RouteModel::Node* n2){return (n1->g_value+n1->h_value > n2->g_value+n2->h_value);});
 
     // Return the node with the lowest g+h sum, and remove it from open_list
     RouteModel::Node* NextNodePointer = open_list.back();
-    open_list.pop_back(); // Remove node with lowest GH sum
+    open_list.pop_back(); // Remove node with lowest g+h sum
     return NextNodePointer;
 }
 
@@ -71,8 +61,8 @@ std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node 
     RouteModel::Node *path_node = current_node;
     while (path_node->parent != nullptr) {
 
-        // Insert path_node in path_found vector and update total distance
-        path_found.insert(path_found.begin(), *path_node->parent);
+        // Insert path_node in back of path_found; update total distance
+        path_found.push_back(*path_node->parent);
         distance += path_node->distance(*(path_node->parent));
 
         // Increment from current path node to its parent
@@ -80,10 +70,10 @@ std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node 
     }
 
     distance *= m_Model.MetricScale(); // Multiply the distance by the scale of the map to get meters.
+    std::reverse(path_found.begin(), path_found.end()); // Reverse path_found to place start_node at front() and end_node at back()
     return path_found;
 
 }
-
 
 /*
 A* Search algorithm
